@@ -91,7 +91,7 @@
                 <WRAPPED_OPTION NAME="XRef Read Color" CLASS="ghidra.framework.options.WrappedColor">
                     <STATE NAME="color" TYPE="int" VALUE="-21892" />
                 <WRAPPED_OPTION NAME="Separator Color" CLASS="ghidra.framework.options.WrappedColor">
-                    <STATE NAME="color" TYPE="int" VALUE="-4145737" />
+                    <STATE NAME="color" TYPE="int" VALUE="-5592406" />
                 <WRAPPED_OPTION NAME="Function Auto-Parameters Color" CLASS="ghidra.framework.options.WrappedColor">
                     <STATE NAME="color" TYPE="int" VALUE="-20736" />
                 <WRAPPED_OPTION NAME="Comment, Automatic Color" CLASS="ghidra.framework.options.WrappedColor">
