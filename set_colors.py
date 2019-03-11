@@ -2,40 +2,67 @@
 
 # usage: path to _code_browser.tcd (in your home directory)
 
+import os
+import json
 import sys
+from xml.dom import minidom
+
+
+def set_color(xmldoc, category, name, color):
+    for category_tag in xmldoc.getElementsByTagName("CATEGORY"):
+        if category_tag.getAttribute("NAME") == category:
+            break
+
+    wrapper = xmldoc.createElement("WRAPPED_OPTION")
+    wrapper.setAttribute("NAME", name)
+    wrapper.setAttribute("CLASS", "ghidra.framework.options.WrappedColor")
+
+    state = xmldoc.createElement("STATE")
+    state.setAttribute("NAME", "color")
+    state.setAttribute("TYPE", "int")
+    state.setAttribute("VALUE", str(color))
+
+    category_tag.appendChild(wrapper)
+    wrapper.appendChild(state)
+
 
 
 if __name__ == "__main__":
     code_browser_tcd = sys.argv[1]
 
-    with open(code_browser_tcd, "r") as fd:
-        content = fd.read()
-        content_orig = content
-        
-    inp = open("darknight", "r")
+    xmldoc = minidom.parse(sys.argv[1])
 
-    while 1:
-        conf_name = inp.readline()
-        if not conf_name:
-            break
+    """
+    # debug
+    for category in xmldoc.getElementsByTagName("CATEGORY"):
+        print('"%s": {' % category.getAttribute("NAME"))
+        for tag in category.getElementsByTagName("WRAPPED_OPTION"):
+            if tag.getAttribute("CLASS") == "ghidra.framework.options.WrappedColor":
+                state = tag.getElementsByTagName("STATE")[0]
+                print('    "%s": %d,' % (tag.getAttribute("NAME"), int(state.getAttribute("VALUE"))))
+        print("},")
+    """
 
-        i = content.find(conf_name)
-        if i == -1:
-            print("error: can't find", conf_name)
-            break
+    all_colors = json.loads(open("darknight", "r").read())
 
-        j_beg = content.find("<", i + len(conf_name))
-        j_end = content.find("/>", j_beg) + 2
+    for tag in xmldoc.getElementsByTagName("WRAPPED_OPTION"):
+        if tag.getAttribute("CLASS") == "ghidra.framework.options.WrappedColor":
+            tag.parentNode.removeChild(tag)
 
-        color = inp.readline().strip()
-        content = content[:j_beg] + color + content[j_end:]
+    for category, colors in all_colors.items():
+        for name, color in colors.items():
+            set_color(xmldoc, category, name, color)
 
-    # content = content.replace("\n", "\r\n")
+    tool = xmldoc.getElementsByTagName("TOOL")[0]
+    tool.setAttribute("TOOL_NAME", "CodeBrowserDarkNight")
 
-    with open(code_browser_tcd + ".bak", "w+") as fd:
-        fd.write(content_orig)
-        print("old file copied to", code_browser_tcd + ".bak")
+    icon = xmldoc.getElementsByTagName("ICON")[0]
+    icon.setAttribute("LOCATION", "red-dragon.gif")
 
-    with open(code_browser_tcd, "w+") as fd:
-        fd.write(content)
-        print("colors set !")
+    d = os.path.dirname(sys.argv[1])
+
+    filename_out = "%s/_code_browser_dark_night.tcd" % d
+    open(filename_out, "w+").write(xmldoc.toprettyxml(indent="    ", newl="\n"))
+
+    print("-> %s" % filename_out)
+    print("now open ghidra and select the red dragon")
