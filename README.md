@@ -1,4 +1,5 @@
-DarkNight theme for [Ghidra](https://github.com/NationalSecurityAgency/ghidra)
+![ghidra_darknight](/black_dragon.png?raw=true)
+ DarkNight theme for [Ghidra](https://github.com/NationalSecurityAgency/ghidra)
 ==============================================================================
 
 There are still some "bugs" in the display, because actually we can't
