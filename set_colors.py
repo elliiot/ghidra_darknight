@@ -5,7 +5,9 @@
 import os
 import json
 import sys
+from os.path import expanduser
 from xml.dom import minidom
+from shutil import copyfile
 
 
 def set_color(xmldoc, category, name, color):
@@ -63,8 +65,11 @@ if __name__ == "__main__":
     tool = xmldoc.getElementsByTagName("TOOL")[0]
     tool.setAttribute("TOOL_NAME", "CodeBrowserDarkNight")
 
+    dragon_path = expanduser("~") + "/.ghidra/.ghidra-9.0/tools/black_dragon.png"
     icon = xmldoc.getElementsByTagName("ICON")[0]
-    icon.setAttribute("LOCATION", "red-dragon.gif")
+    icon.setAttribute("LOCATION", dragon_path)
+    copyfile("black_dragon.png", dragon_path)
+    print("-> black dragon icon to %s" % dragon_path)
 
     d = os.path.dirname(sys.argv[1])
 
@@ -72,4 +77,4 @@ if __name__ == "__main__":
     open(filename_out, "w+").write(xmldoc.toprettyxml(indent="    ", newl="\n"))
 
     print("-> %s" % filename_out)
-    print("now open ghidra and select the red dragon")
+    print("now open ghidra and select the black dragon")
