@@ -9,9 +9,17 @@ from xml.dom import minidom
 
 
 def set_color(xmldoc, category, name, color):
+    found = False
     for category_tag in xmldoc.getElementsByTagName("CATEGORY"):
         if category_tag.getAttribute("NAME") == category:
+            found = True
             break
+
+    if not found:
+        options_tag = xmldoc.getElementsByTagName("OPTIONS")[0]
+        category_tag = xmldoc.createElement("CATEGORY")
+        category_tag.setAttribute("NAME", category)
+        options_tag.appendChild(category_tag)
 
     wrapper = xmldoc.createElement("WRAPPED_OPTION")
     wrapper.setAttribute("NAME", name)
@@ -24,7 +32,6 @@ def set_color(xmldoc, category, name, color):
 
     category_tag.appendChild(wrapper)
     wrapper.appendChild(state)
-
 
 
 if __name__ == "__main__":
